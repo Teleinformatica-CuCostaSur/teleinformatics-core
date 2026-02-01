@@ -5,7 +5,7 @@ CREATE TABLE roles (
                        description VARCHAR(100)
 );
 
--- Pre-populate roles based on University requirements
+-- Pre-populate roles
 INSERT INTO roles (name, description) VALUES
                                           ('ROLE_STUDENT', 'University student'),
                                           ('ROLE_TEACHER', 'Academic staff / Professor'),
@@ -15,7 +15,6 @@ INSERT INTO roles (name, description) VALUES
 
 -- 2. Users Table (Auth Credentials)
 CREATE TABLE users (
-    -- UUID nativo de Postgres como Primary Key
                        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        email VARCHAR(100) NOT NULL UNIQUE,
                        password VARCHAR(255) NOT NULL,
