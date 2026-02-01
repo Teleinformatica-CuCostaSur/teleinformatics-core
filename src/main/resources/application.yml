@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: teleinformatics-core
+  datasource:
+    url: "jdbc:postgresql://localhost:${DB_PORT}/${POSTGRES_DB_NAME}"
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
