@@ -5,3 +5,8 @@ spring:
     url: "jdbc:postgresql://localhost:${DB_PORT}/${POSTGRES_DB_NAME}"
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+
+
+jwt:
+  secret-key: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
