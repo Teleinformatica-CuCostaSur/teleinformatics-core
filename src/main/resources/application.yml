@@ -1,6 +1,8 @@
 spring:
   application:
     name: teleinformatics-core
+  config:
+    import: "optional:file:.env[.properties]"
   datasource:
     url: "jdbc:postgresql://localhost:${DB_PORT}/${POSTGRES_DB_NAME}"
     username: ${POSTGRES_USER}
