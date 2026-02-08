@@ -2,7 +2,7 @@ spring:
   application:
     name: teleinformatics-core
   config:
-    import: "optional:file:.env[.properties]"
+    import: optional:file:.env[.properties]
   datasource:
     url: "jdbc:mysql://${DB_HOST}:${DB_PORT}/${MYSQL_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=false"
     username: ${MYSQL_USER}
@@ -17,7 +17,15 @@ spring:
         format_sql: true
     show-sql: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
 
 jwt:
-  secret-key: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION}
+  secret-key: ${JWT_SECRET:default-secret-key-for-development-must-be-at-least-32-characters-long}
+  expiration: ${JWT_EXPIRATION:86400000}

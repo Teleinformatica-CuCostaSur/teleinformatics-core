@@ -1,0 +1,53 @@
+# Build artifacts
+build/
+target/
+.gradle/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Environment files (¡IMPORTANTE! No copiar credenciales)
+.env
+.env.*
+*.env
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+CODEOWNERS
+*.md
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test files (opcional, ya los excluimos en el build)
+src/test/
+
+# Temporary files
+tmp/
+temp/

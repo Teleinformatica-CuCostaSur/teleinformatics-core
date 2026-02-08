@@ -343,8 +343,8 @@ Los **Services** contienen la **lógica de negocio**. Coordinan repositorios, ap
 ```java
 package edu.teleinformatics.core.student.service;
 
-import edu.teleinformatics.core.db.user.entity.User;
-import edu.teleinformatics.core.db.user.repository.UserRepository;
+import entity.edu.teleinformatics.core.db.User;
+import repository.edu.teleinformatics.core.db.UserRepository;
 import edu.teleinformatics.core.exception.NotFoundException;
 import edu.teleinformatics.core.student.dto.StudentResponse;
 import lombok.RequiredArgsConstructor;

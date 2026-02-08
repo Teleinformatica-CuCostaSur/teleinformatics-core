@@ -1,7 +1,7 @@
-package edu.teleinformatics.core.db.user.repository;
+package edu.teleinformatics.core.db.repository;
 
-import edu.teleinformatics.core.db.user.entity.Role;
-import edu.teleinformatics.core.db.user.entity.RoleEnum;
+import edu.teleinformatics.core.db.entity.Role;
+import edu.teleinformatics.core.db.entity.RoleEnum;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -16,6 +16,7 @@ public enum ErrorHandler {
     INVALID_INPUT("GEN-002", "Invalid field values", HttpStatus.BAD_REQUEST),
     INVALID_CREDENTIALS("GEN-003", "Invalid credentials", HttpStatus.UNAUTHORIZED),
     NOT_FOUND_GENERIC("GEN-004", "The requested resource was not found", HttpStatus.NOT_FOUND),
+    METHOD_NOT_ALLOWED("GEN-005", "The requested HTTP method is not allowed for this endpoint", HttpStatus.METHOD_NOT_ALLOWED),
 
     // AUTH
     USER_ALREADY_EXISTS("AUTH-001", "The email address is already in use", HttpStatus.CONFLICT),

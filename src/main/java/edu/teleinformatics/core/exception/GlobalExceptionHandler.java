@@ -2,7 +2,7 @@ package edu.teleinformatics.core.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.teleinformatics.core.auth.exception.UserAlreadyExistsException;
-import edu.teleinformatics.core.db.user.exception.RoleNotFoundException;
+import edu.teleinformatics.core.db.exception.RoleNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -12,11 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.naming.AuthenticationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Base64;
@@ -55,6 +55,13 @@ public class GlobalExceptionHandler {
         logException(ex, request, errorMessage, ErrorHandler.INVALID_INPUT.getCode());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiErrorResponse(errorMessage, ErrorHandler.INVALID_INPUT.getCode()));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodNotAllowedException(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        logException(ex, request, ErrorHandler.METHOD_NOT_ALLOWED.getDefaultMessage(), ErrorHandler.METHOD_NOT_ALLOWED.getCode());
+
+        return ResponseEntity.status(ErrorHandler.METHOD_NOT_ALLOWED.getHttpStatus()).body(new ApiErrorResponse(ErrorHandler.METHOD_NOT_ALLOWED.getDefaultMessage(), ErrorHandler.METHOD_NOT_ALLOWED.getCode()));
     }
 
     @ExceptionHandler(NotFoundException.class)

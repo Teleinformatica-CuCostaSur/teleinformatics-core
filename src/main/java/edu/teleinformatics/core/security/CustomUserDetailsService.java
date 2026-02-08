@@ -1,8 +1,8 @@
 package edu.teleinformatics.core.security;
 
 import edu.teleinformatics.core.auth.exception.AuthUserNotFoundException;
-import edu.teleinformatics.core.db.user.entity.User;
-import edu.teleinformatics.core.db.user.repository.UserRepository;
+import edu.teleinformatics.core.db.entity.User;
+import edu.teleinformatics.core.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;

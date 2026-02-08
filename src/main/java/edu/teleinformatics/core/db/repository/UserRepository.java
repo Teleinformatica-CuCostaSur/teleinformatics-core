@@ -1,6 +1,6 @@
-package edu.teleinformatics.core.db.user.repository;
+package edu.teleinformatics.core.db.repository;
 
-import edu.teleinformatics.core.db.user.entity.User;
+import edu.teleinformatics.core.db.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;

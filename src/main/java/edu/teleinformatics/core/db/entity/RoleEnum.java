@@ -1,4 +1,4 @@
-package edu.teleinformatics.core.db.user.entity;
+package edu.teleinformatics.core.db.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

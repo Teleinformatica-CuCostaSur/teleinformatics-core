@@ -1,4 +1,4 @@
-package edu.teleinformatics.core.db.user.exception;
+package edu.teleinformatics.core.db.exception;
 
 public class RoleNotFoundException extends RuntimeException {
   public RoleNotFoundException(String message) {
