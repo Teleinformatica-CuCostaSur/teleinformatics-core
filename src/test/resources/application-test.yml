@@ -1,8 +1,4 @@
 spring:
-  application:
-    name: teleinformatics-core
-  config:
-    import: "optional:file:.env[.properties]"
   datasource:
     url: "jdbc:mysql://${DB_HOST}:${DB_PORT}/${MYSQL_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=false"
     username: ${MYSQL_USER}
@@ -11,12 +7,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        format_sql: true
+      ddl-auto: create-drop
     show-sql: false
-
+  flyway:
+    enabled: false
 
 jwt:
   secret-key: ${JWT_SECRET}

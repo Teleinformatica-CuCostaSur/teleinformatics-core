@@ -6,12 +6,13 @@ import edu.teleinformatics.core.auth.dto.LoginUser;
 import edu.teleinformatics.core.auth.exception.UserAlreadyExistsException;
 import edu.teleinformatics.core.security.CustomUserDetails;
 import edu.teleinformatics.core.security.jwt.JwtService;
-import edu.teleinformatics.core.user.entity.Role;
-import edu.teleinformatics.core.user.entity.RoleEnum;
-import edu.teleinformatics.core.user.entity.User;
-import edu.teleinformatics.core.user.exception.RoleNotFoundException;
-import edu.teleinformatics.core.user.repository.RoleRepository;
-import edu.teleinformatics.core.user.repository.UserRepository;
+import edu.teleinformatics.core.db.user.entity.Role;
+import edu.teleinformatics.core.db.user.entity.RoleEnum;
+import edu.teleinformatics.core.db.user.entity.User;
+import edu.teleinformatics.core.db.user.exception.RoleNotFoundException;
+import edu.teleinformatics.core.db.user.repository.RoleRepository;
+import edu.teleinformatics.core.db.user.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,23 +35,22 @@ public class AuthService {
 
     @Transactional
     public AuthComplete createUser(CreateUser createUser) {
-        if(userRepository.existsByEmail(createUser.email())) {
-            log.warn("Attempted registration with an already existing email: {}", createUser.email());
-            throw new UserAlreadyExistsException("Email is already registered.");
-        }
-
         String hashedPassword = passwordEncoder.encode(createUser.password());
 
         Role initialRole = roleRepository.findByName(RoleEnum.ROLE_STUDENT)
                 .orElseThrow(() -> new RoleNotFoundException("Default role not found"));
 
-        User user = userRepository.save(new User(createUser.email(), hashedPassword, initialRole));
+        try {
+            User user = userRepository.saveAndFlush(new User(createUser.email(), hashedPassword, initialRole));
 
-        String jwt = jwtService.generateToken(user.getId(), user.getEmail(), List.of(initialRole.getName().name()));
+            String jwt = jwtService.generateToken(user.getId(), user.getEmail(), List.of(initialRole.getName().name()));
 
-        log.info("New user created. Id: {}", user.getId());
+            log.info("New user created. Id: {}", user.getId());
 
-        return new AuthComplete(user.getId(), jwt);
+            return new AuthComplete(user.getId(), jwt);
+        } catch (DataIntegrityViolationException e){
+            throw new UserAlreadyExistsException("The email " + createUser.email() + " is already registered.");
+        }
     }
 
 

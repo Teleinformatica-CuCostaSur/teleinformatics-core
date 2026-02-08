@@ -1,4 +1,4 @@
-package edu.teleinformatics.core.user.entity;
+package edu.teleinformatics.core.db.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
