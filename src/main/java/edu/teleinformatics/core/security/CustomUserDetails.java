@@ -1,6 +1,6 @@
 package edu.teleinformatics.core.security;
 
-import edu.teleinformatics.core.user.entity.Role;
+import edu.teleinformatics.core.db.user.entity.Role;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

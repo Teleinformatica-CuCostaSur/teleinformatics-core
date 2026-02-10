@@ -1,4 +1,4 @@
-package edu.teleinformatics.core.user.entity;
+package edu.teleinformatics.core.db.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,6 +22,8 @@ import java.util.UUID;
 public class UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(length = 36)
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
