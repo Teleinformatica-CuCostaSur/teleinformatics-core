@@ -11,12 +11,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.naming.AuthenticationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Base64;
@@ -32,9 +31,10 @@ public class GlobalExceptionHandler {
 
     /**
      * Standardized error response for the API. It contains the following fields:
+     *
      * @param message   Detailed message about the error
      * @param errorCode A custom error code for the specific error
-     * @param hash The stack trace of the exception, which can be included for debugging purposes. This field is optional and can be omitted in production environments to avoid exposing sensitive information.
+     * @param hash      The stack trace of the exception, which can be included for debugging purposes. This field is optional and can be omitted in production environments to avoid exposing sensitive information.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record ApiErrorResponse(
@@ -57,6 +57,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiErrorResponse(errorMessage, ErrorHandler.INVALID_INPUT.getCode()));
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiErrorResponse> handleAuthenticationException(AuthenticationException ex, HttpServletRequest request) {
+        logException(ex, request, ex.getMessage(), ErrorHandler.AUTH_FAILED.getCode());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiErrorResponse(ex.getMessage(), ErrorHandler.AUTH_FAILED.getCode()));
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleNotFoundException(NotFoundException ex, HttpServletRequest request) {
         logException(ex, request, ex.getMessage(), ErrorHandler.NOT_FOUND_GENERIC.getCode());
@@ -71,20 +78,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ErrorHandler.ROLE_NOT_FOUND.getHttpStatus()).body(new ApiErrorResponse(ex.getMessage(), ErrorHandler.ROLE_NOT_FOUND.getCode()));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
-        // Convert stack trace into a string.
-        StringWriter sw = new StringWriter();
-        ex.printStackTrace(new PrintWriter(sw));
-        String stackTrace = sw.toString();
-
-        // Convert stack trace string into base64
-        String base64 = Base64.getEncoder().encodeToString(stackTrace.getBytes());
-
-        logException(ex, request, ErrorHandler.INTERNAL_ERROR.getDefaultMessage(), ErrorHandler.INTERNAL_ERROR.getCode());
-
-        return ResponseEntity.status(ErrorHandler.INTERNAL_ERROR.getHttpStatus()).body(new ApiErrorResponse(ErrorHandler.INTERNAL_ERROR.getDefaultMessage(), ErrorHandler.INTERNAL_ERROR.getCode(), base64));
-    }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ApiErrorResponse> handleUserAlreadyExistsException(UserAlreadyExistsException ex, HttpServletRequest request) {
@@ -107,24 +100,40 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ErrorHandler.INVALID_CREDENTIALS.getHttpStatus()).body(new ApiErrorResponse(ErrorHandler.INVALID_CREDENTIALS.getDefaultMessage(), ErrorHandler.INVALID_CREDENTIALS.getCode()));
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
+        // Convert stack trace into a string.
+        StringWriter sw = new StringWriter();
+        ex.printStackTrace(new PrintWriter(sw));
+        String stackTrace = sw.toString();
+
+        // Convert stack trace string into base64
+        String base64 = Base64.getEncoder().encodeToString(stackTrace.getBytes());
+
+        logException(ex, request, ErrorHandler.INTERNAL_ERROR.getDefaultMessage(), ErrorHandler.INTERNAL_ERROR.getCode());
+
+        return ResponseEntity.status(ErrorHandler.INTERNAL_ERROR.getHttpStatus()).body(new ApiErrorResponse(ErrorHandler.INTERNAL_ERROR.getDefaultMessage(), ErrorHandler.INTERNAL_ERROR.getCode(), base64));
+    }
+
     /**
      * Logs the exception with relevant information such as the request path, IP address, user agent, and stack trace. This method is called from each exception handler to ensure consistent logging of all exceptions.
-     * @param ex The exception to be logged
-     * @param request The HTTP request that caused the exception
+     *
+     * @param ex           The exception to be logged
+     * @param request      The HTTP request that caused the exception
      * @param errorMessage A detailed message about the error, which will be included in the log
-     * @param errorCode A custom error code for the specific error, which will be included in the log
+     * @param errorCode    A custom error code for the specific error, which will be included in the log
      */
     private void logException(Exception ex, HttpServletRequest request, String errorMessage, String errorCode) {
         log.error("""
-                An exception occurred while processing the request:
-                ErrorCode: {}
-                Message: {}
-                Exception: {}
-                Request: {}
-                IP: {}
-                User-Agent: {}
-                Stacktrace: {}
-                """,
+                        An exception occurred while processing the request:
+                        ErrorCode: {}
+                        Message: {}
+                        Exception: {}
+                        Request: {}
+                        IP: {}
+                        User-Agent: {}
+                        Stacktrace: {}
+                        """,
                 errorCode,
                 errorMessage,
                 ex.getClass().getSimpleName(),
